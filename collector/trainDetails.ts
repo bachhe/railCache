@@ -16,40 +16,70 @@ export function saveTrain(json: any) {
   const train = json.data;
 
   const lat = train.currentLocation?.coordinates?.lat;
-
   const lng = train.currentLocation?.coordinates?.lng;
 
   const distance = train.currentLocation?.distanceFromOriginKm;
 
-  db.prepare(
-    `
-    INSERT INTO train_history
-    (
-      train_no,
-      updated_at,
-      lat,
-      lng,
-      distance_from_origin,
-      last_updated_at
-    )
-    VALUES
-    (?, ?, ?, ?, ?, ?)
-  `,
-  ).run(train.trainNumber, Date.now(), lat, lng, distance, train.lastUpdatedAt);
-
-  db.prepare(
-    `
-    DELETE FROM train_history
-    WHERE rowid NOT IN (
-      SELECT rowid
+  const previous = db
+    .query(
+      `
+      SELECT *
       FROM train_history
       WHERE train_no = ?
       ORDER BY updated_at DESC
-      LIMIT 2
+      LIMIT 1
+    `,
     )
-    AND train_no = ?
-  `,
-  ).run(train.trainNumber, train.trainNumber);
+    .get(train.trainNumber) as
+    | {
+        distance_from_origin: number;
+      }
+    | undefined;
+
+  let changed = true;
+
+  if (previous) {
+    changed = previous.distance_from_origin !== distance;
+  }
+
+  if (changed) {
+    db.prepare(
+      `
+      INSERT INTO train_history
+      (
+        train_no,
+        updated_at,
+        lat,
+        lng,
+        distance_from_origin,
+        last_updated_at
+      )
+      VALUES
+      (?, ?, ?, ?, ?, ?)
+    `,
+    ).run(
+      train.trainNumber,
+      Date.now(),
+      lat,
+      lng,
+      distance,
+      train.lastUpdatedAt,
+    );
+
+    db.prepare(
+      `
+      DELETE FROM train_history
+      WHERE rowid NOT IN (
+        SELECT rowid
+        FROM train_history
+        WHERE train_no = ?
+        ORDER BY updated_at DESC
+        LIMIT 2
+      )
+      AND train_no = ?
+    `,
+    ).run(train.trainNumber, train.trainNumber);
+  }
 
   db.prepare(
     `
