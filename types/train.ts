@@ -1,0 +1,15 @@
+export type LiveMapTrain = [
+  string,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  string,
+  number,
+  string,
+  number,
+];
