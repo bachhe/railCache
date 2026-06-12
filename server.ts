@@ -36,6 +36,14 @@ Bun.serve({
       return Response.json(getLiveMap());
     }
 
+    if (path.startsWith("/train/") && path.endsWith("/history")) {
+      const parts = path.split("/");
+      const trainNo = parts[2];
+      const i = Number(url.searchParams.get("i")) || 0;
+
+      return Response.json(getTrainHistory(trainNo, i));
+    }
+
     if (path.startsWith("/train/")) {
       const trainNo = path.split("/")[2];
 
@@ -79,14 +87,6 @@ Bun.serve({
           .get(),
         lastCycle: health.lastCycle,
       });
-    }
-
-    if (path.startsWith("/train/") && path.endsWith("/history")) {
-      const parts = path.split("/");
-      const trainNo = parts[2];
-      const i = Number(url.searchParams.get("i")) || 0;
-
-      return Response.json(getTrainHistory(trainNo, i));
     }
 
     return new Response("Not Found", {
