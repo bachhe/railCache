@@ -70,7 +70,7 @@ export function saveTrain(json: any) {
         FROM train_history
         WHERE train_no = ?
         ORDER BY updated_at DESC
-        LIMIT 5
+        LIMIT 10
       )
       AND train_no = ?
     `,
