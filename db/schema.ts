@@ -43,3 +43,22 @@ CREATE TABLE IF NOT EXISTS train_details (
     updated_at INTEGER
 )
 `);
+
+db.run(`
+CREATE TABLE IF NOT EXISTS train_history (
+    train_no TEXT,
+    updated_at INTEGER,
+
+    lat REAL,
+    lng REAL,
+
+    distance_from_origin REAL,
+
+    last_updated_at TEXT,
+
+    PRIMARY KEY (
+        train_no,
+        updated_at
+    )
+);
+`);

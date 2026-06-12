@@ -12,6 +12,7 @@ import { getHealth } from "./routes/health";
 import { health } from "./services/health";
 import { db } from "./db/db";
 import chalk from "chalk";
+import { getTrainHistory } from "./routes/trainHistory";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -78,6 +79,14 @@ Bun.serve({
           .get(),
         lastCycle: health.lastCycle,
       });
+    }
+
+    if (path.startsWith("/train/") && path.endsWith("/history")) {
+      const parts = path.split("/");
+      const trainNo = parts[2];
+      const i = Number(url.searchParams.get("i")) || 0;
+
+      return Response.json(getTrainHistory(trainNo, i));
     }
 
     return new Response("Not Found", {
