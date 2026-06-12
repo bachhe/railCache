@@ -23,7 +23,7 @@ export function saveTrain(json: any) {
   const previous = db
     .query(
       `
-      SELECT *
+      SELECT distance_from_origin
       FROM train_history
       WHERE train_no = ?
       ORDER BY updated_at DESC
@@ -36,11 +36,7 @@ export function saveTrain(json: any) {
       }
     | undefined;
 
-  let changed = true;
-
-  if (previous) {
-    changed = previous.distance_from_origin !== distance;
-  }
+  const changed = !previous || previous.distance_from_origin !== distance;
 
   if (changed) {
     db.prepare(
@@ -74,7 +70,7 @@ export function saveTrain(json: any) {
         FROM train_history
         WHERE train_no = ?
         ORDER BY updated_at DESC
-        LIMIT 2
+        LIMIT 5
       )
       AND train_no = ?
     `,
@@ -83,8 +79,7 @@ export function saveTrain(json: any) {
 
   db.prepare(
     `
-    INSERT OR REPLACE INTO
-    train_details
+    INSERT OR REPLACE INTO train_details
     VALUES
     (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
