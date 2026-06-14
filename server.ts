@@ -69,7 +69,7 @@ Bun.serve({
         return Response.json(getAreaLiveMap(area));
       }
 
-      if (action === "/live-map-v2") {
+      if (action === "live-map-v2") {
         return Response.json(getLiveMapV2(area));
       }
 
