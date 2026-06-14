@@ -2,7 +2,17 @@ import { db } from "../db/db";
 
 export async function fetchTrain(trainNo: string) {
   const res = await fetch(
-    `https://railradar.in/api/v1/trains/${trainNo}/live?includeCoordinates=true`,
+    `https://api.railradar.in/app/v1/trains/${trainNo}/live?includeCoordinates=true`,
+    {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/137.0.0.0 Safari/537.36",
+
+        Accept: "application/json,text/plain,*/*",
+
+        Referer: "https://railradar.in/",
+      },
+    },
   );
 
   if (!res.ok) {
