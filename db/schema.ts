@@ -40,6 +40,11 @@ CREATE TABLE IF NOT EXISTS train_details (
 
     data TEXT,
 
+    -- Extracted fields so getLiveMapV2 never has to parse data JSON at runtime.
+    -- Populated by saveTrain alongside the data column.
+    max_speed REAL,
+    route_json TEXT,
+
     updated_at INTEGER
 )
 `);
@@ -60,5 +65,20 @@ CREATE TABLE IF NOT EXISTS train_history (
         train_no,
         updated_at
     )
-);
+)
 `);
+
+// ── Migrate existing train_details rows that predate the new columns ──────────
+// ALTER TABLE ... ADD COLUMN is a no-op if the column already exists in SQLite
+// (it throws, so we catch). Running this on every startup is safe.
+
+for (const col of [
+  "ALTER TABLE train_details ADD COLUMN max_speed REAL",
+  "ALTER TABLE train_details ADD COLUMN route_json TEXT",
+]) {
+  try {
+    db.run(col);
+  } catch {
+    // column already exists — ignore
+  }
+}
