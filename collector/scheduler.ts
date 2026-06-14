@@ -12,8 +12,8 @@ export async function startCollector() {
 
     const elapsed = Date.now() - started;
 
-    if (elapsed < 5000) {
-      await Bun.sleep(5000 - elapsed);
+    if (elapsed < 30000) {
+      await Bun.sleep(30000 - elapsed);
     }
   }
 }
