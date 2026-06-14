@@ -3,7 +3,7 @@ import "./db/schema";
 import { startCollector } from "./collector/scheduler";
 
 import { getLiveMap } from "./routes/liveMap";
-
+import { getLiveMapV2 } from "./collector/liveMapV2";
 import { getAreaLiveMap, getAreaTrains } from "./routes/areas";
 
 import { getTrain } from "./routes/trains";
@@ -67,6 +67,10 @@ Bun.serve({
 
       if (action === "live-map") {
         return Response.json(getAreaLiveMap(area));
+      }
+
+      if (path === "/live-map-v2") {
+        return Response.json(getLiveMapV2(area));
       }
 
       if (action === "trains") {
